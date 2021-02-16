@@ -4,7 +4,7 @@ How to use:
 1. Download and unpack 'Набор данных' (for exemple: 
     https://proverki.procrf.su/blob/plan/2021/data-20210206-structure-20181015.zip)
 2. Run xml_parser.py with attributs path_to_data and INN of legal entity (for exemple: 
-    python3 xml_parser.py ~/inspection 5257056035)
+    python3 xml_parser.py ~/inspections 5257056035)
 3. The parser will create the result XML file in ./results/ if there is any results of 
     parsing
 '''
@@ -29,7 +29,7 @@ class Parser:
         self.counter = 0
         
     def result_xml(self):
-        #creats result xml file 
+        #creats the result xml file 
         
         if os.path.isdir(os.path.dirname(self.path_to_result)) == False:
             os.mkdir(os.path.dirname(self.path_to_result))
