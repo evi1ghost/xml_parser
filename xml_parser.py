@@ -19,18 +19,16 @@ import concurrent.futures
 class Parser:
     
     def __init__(self, path_to_data, inn):
-        
         self.path_to_data = path_to_data
         self.inn = inn
-        self.path_to_result = os.path.join(os.getcwd(),  'results', \
-                                                                f'{str(time.time())}.xml')
+        self.path_to_result = os.path.join(os.getcwd(), 'results',\
+                                           f'{str(time.time())}.xml')
         self._result_root = self.result_xml()
         self.data_list = self.data_list()
         self.counter = 0
         
     def result_xml(self):
         #creats the result xml file 
-        
         if os.path.isdir(os.path.dirname(self.path_to_result)) == False:
             os.mkdir(os.path.dirname(self.path_to_result))
         with open(self.path_to_result,  'w') as f:
@@ -40,7 +38,6 @@ class Parser:
 
     def data_list(self):
         # creats a list of XML files from path_to_data
-        
         try:
             with os.scandir(self.path_to_data) as it:
                 _data = [x for x in it if x.name.endswith('.xml') and x.is_file()]
@@ -55,7 +52,6 @@ class Parser:
 
     def parser(self,  data):
         # parses the data
-
         root = ElementTree.parse(data).getroot()
         for child in root:
             for i in range(0,  len(child)):
@@ -68,7 +64,6 @@ class Parser:
     
     def parse_the_data(self):
         # parses the data_list
-        
         with concurrent.futures.ThreadPoolExecutor() as executor:
             executor.map(self.parser, self.data_list)
         if self.counter > 0:
@@ -79,14 +74,12 @@ class Parser:
 
     def result(self):
         # writes the result to the file. 
-
         with open(self.path_to_result,  'w') as f:
             f.write(ElementTree.tostring(self._result_root,  'utf-8').decode())
         self.deleter()
         
     def deleter(self):
         # If the parser finds nothing or error occurred - deletes the result file
-        
         with open(self.path_to_result,  'r') as f:
             r = f.read()
         if r == '<body />' or r == '<body></body>':
