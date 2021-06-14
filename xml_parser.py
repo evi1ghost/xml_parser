@@ -1,4 +1,4 @@
-'''
+"""
 XML parser for open data from https://proverki.gov.ru/portal/public-open-data.
 How to use:
 1. Download and unpack 'Набор данных' (for exemple: 
@@ -7,7 +7,7 @@ How to use:
     python3 xml_parser.py ~/inspections 5257056035)
 3. The parser will create the result XML file in ./results/ if there is any results of 
     parsing
-'''
+"""
 
 import os
 import time
@@ -28,7 +28,7 @@ class Parser:
         self.counter = 0
         
     def result_xml(self):
-        #creats the result xml file 
+        """Creats the result xml file""" 
         if os.path.isdir(os.path.dirname(self.path_to_result)) == False:
             os.mkdir(os.path.dirname(self.path_to_result))
         with open(self.path_to_result,  'w') as f:
@@ -37,7 +37,7 @@ class Parser:
         return  _result_root
 
     def data_list(self):
-        # creats a list of XML files from path_to_data
+        """Creats a list of XML files from path_to_data"""
         try:
             with os.scandir(self.path_to_data) as it:
                 _data = [x for x in it if x.name.endswith('.xml') and x.is_file()]
@@ -51,7 +51,7 @@ class Parser:
             raise ValueError('invalid path to data')
 
     def parser(self,  data):
-        # parses the data
+        """Parses the data"""
         root = ElementTree.parse(data).getroot()
         for child in root:
             for i in range(0,  len(child)):
@@ -63,7 +63,7 @@ class Parser:
                     continue
     
     def parse_the_data(self):
-        # parses the data_list
+        """Parses the data_list"""
         with concurrent.futures.ThreadPoolExecutor() as executor:
             executor.map(self.parser, self.data_list)
         if self.counter > 0:
@@ -73,13 +73,13 @@ class Parser:
             print('Find nothing')
 
     def result(self):
-        # writes the result to the file. 
+        """Writes the result to the file""" 
         with open(self.path_to_result,  'w') as f:
             f.write(ElementTree.tostring(self._result_root,  'utf-8').decode())
         self.deleter()
         
     def deleter(self):
-        # If the parser finds nothing or error occurred - deletes the result file
+        """If the parser finds nothing or error occurred - deletes the result file"""
         with open(self.path_to_result,  'r') as f:
             r = f.read()
         if r == '<body />' or r == '<body></body>':
